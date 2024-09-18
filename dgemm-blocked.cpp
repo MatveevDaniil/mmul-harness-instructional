@@ -7,10 +7,10 @@ const char* dgemm_desc = "Blocked dgemm.";
 void block_dgemm(int n, double* A, double* B, double* C) 
 {
   double dot_prod, *A_i, *C_i, *B_j, *C_ij, *A_ik, *B_kj;
-  for (A_i = A, C_i = C; A_i < A + n; A_i++, C_i++)
-    for (B_j = B, C_ij = C_i; B_j < B + n * n; B_j += n, C_ij += n) {
+  for (A_i = A, C_i = C; A_i < A + n * n; A_i += n, C_i += n)
+    for (B_j = B, C_ij = C_i; B_j < B + n; B_j += 1, C_ij += 1) {
       dot_prod = 0;
-      for (A_ik = A_i, B_kj = B_j; B_kj < B_j + n; A_ik += n, B_kj += 1)
+      for (A_ik = A_i, B_kj = B_j; B_kj < B_j + n * n; A_ik += 1, B_kj += n)
         dot_prod += (*A_ik) * (*B_kj);
       *C_ij += dot_prod;
     }
@@ -25,18 +25,18 @@ void print_matrix(int n, double *A) {
 }
 
 void copy_to_block(int n, int block_size, double *M, double *block, int block_i, int block_j) {
-  M += block_i * block_size + block_j * block_size * n;
+  M += block_i * block_size * n + block_j * block_size;
   double *M_i, *B_i, *M_ij, *B_ij;
-  for (M_i = M, B_i = block; M_i < M + block_size; M_i += 1, B_i += 1)
-    for (M_ij = M_i, B_ij = B_i; M_ij < M_i + block_size * n; M_ij += n, B_ij += block_size)
+  for (M_i = M, B_i = block; M_i < M + block_size * n; M_i += n, B_i += block_size)
+    for (M_ij = M_i, B_ij = B_i; M_ij < M_i + block_size; M_ij += 1, B_ij += 1)
       *B_ij = *M_ij;
 }
 
 void add_from_block(int n, int block_size, double *M, double *block, int block_i, int block_j) {
-  M += block_i * block_size + block_j * block_size * n;
+  M += block_i * block_size * n + block_j * block_size;
   double *M_i, *B_i, *M_ij, *B_ij;
-  for (M_i = M, B_i = block; M_i < M + block_size; M_i += 1, B_i += 1)
-    for (M_ij = M_i, B_ij = B_i; M_ij < M_i + block_size * n; M_ij += n, B_ij += block_size) {
+  for (M_i = M, B_i = block; M_i < M + block_size * n; M_i += n, B_i += block_size)
+    for (M_ij = M_i, B_ij = B_i; M_ij < M_i + block_size; M_ij += 1, B_ij += 1) {
       *M_ij += *B_ij;
       *B_ij = 0;
     }

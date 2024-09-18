@@ -69,7 +69,6 @@ int main(int argc, char** argv)
     /* For each test size */
     for (int n : test_sizes) 
     {
-        printf("Working on problem size N=%d \n", n);
 
 #ifdef BLOCKED
         printf("Blocked DGEMM \n");
@@ -111,7 +110,7 @@ int main(int argc, char** argv)
            // insert timer code here
            start = std::chrono::system_clock::now();
            reference_dgemm(n, 1.0 , Acopy, Bcopy, Ccopy);
-           run_time = std::chrono::system_clock::now() - start;
+           cblas_time = std::chrono::system_clock::now() - start;
 
            // compare your C with that computed by BLAS
            if (check_accuracy(Ccopy, C, n*n) == false)
