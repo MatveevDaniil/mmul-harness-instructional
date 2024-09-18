@@ -8,5 +8,24 @@ const char* dgemm_desc = "Basic implementation, three-loop dgemm.";
  */
 void square_dgemm(int n, double* A, double* B, double* C) 
 {
-   // insert your code here: implementation of basic matrix multiple
+  double dot_prod, *A_i, *C_i, *B_j, *C_ij, *A_ik, *B_kj;
+  for (A_i = A, C_i = C; A_i < A + n; A_i++, C_i++)
+    for (B_j = B, C_ij = C_i; B_j < B + n * n; B_j += n, C_ij += n) {
+      dot_prod = 0;
+      for (A_ik = A_i, B_kj = B_j; B_kj < B_j + n; A_ik += n, B_kj += 1)
+        dot_prod += (*A_ik) * (*B_kj);
+      *C_ij += dot_prod;
+    }
 }
+
+// void square_dgemm(int n, double* A, double* B, double* C) 
+// {
+//    // insert your code here: implementation of basic matrix multiple
+//    for (int i = 0; i < n; i++) {
+//     for (int j = 0; j < n; j++) {
+//       for (int k = 0; k < n; k++) {
+//         C[i + j * n] += A[i + k * n] * B[k + j * n];
+//       }
+//     }
+//    }
+// }

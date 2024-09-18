@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 {
     std::cout << "Description:\t" << dgemm_desc << std::endl << std::endl;
 
-    std::cout << std::fixed << std::setprecision(2);
+    std::cout << std::fixed << std::setprecision(8);
 
     // 9/14/2024: run the 1st problem size twice: the first execution
     // "conditions" BLAS (eg, dll loading), so ignore the runtime from
@@ -63,6 +63,8 @@ int main(int argc, char** argv)
     std::vector<int> block_sizes{2, 16, 32, 64};
 
     int n_problems = test_sizes.size();
+    std::chrono::time_point<std::chrono::system_clock> start;
+    std::chrono::duration<double> run_time, cblas_time;
 
     /* For each test size */
     for (int n : test_sizes) 
@@ -97,21 +99,29 @@ int main(int argc, char** argv)
            // insert timer code here
 
 #ifdef BLOCKED
-           square_dgemm_blocked(n, b, A, B, C); 
+          start = std::chrono::system_clock::now();
+          square_dgemm_blocked(n, b, A, B, C); 
+          run_time = std::chrono::system_clock::now() - start;
 #else
+           start = std::chrono::system_clock::now();
            square_dgemm(n, A, B, C); 
+           run_time = std::chrono::system_clock::now() - start;
 #endif
 
            // insert timer code here
-
+           start = std::chrono::system_clock::now();
            reference_dgemm(n, 1.0 , Acopy, Bcopy, Ccopy);
+           run_time = std::chrono::system_clock::now() - start;
 
            // compare your C with that computed by BLAS
            if (check_accuracy(Ccopy, C, n*n) == false)
               printf(" Error: your answer is not the same as that computed by BLAS. \n");
 
 #ifdef BLOCKED
+            printf("N=%d, Block Size=%d, Time=%f, Cblas_ratio=%f\n", n, b, run_time.count(), run_time.count() / cblas_time.count());
         } // end loop over block sizes
+#else
+            printf("N=%d, Time=%f, Cblas_ratio=%f\n", n, run_time.count(), run_time.count() / cblas_time.count());
 #endif
 
     } // end loop over problem sizes
