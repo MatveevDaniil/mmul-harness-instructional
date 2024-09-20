@@ -20,7 +20,7 @@
 
 // external definitions for mmul's
 extern void square_dgemm(int, double*, double*, double*);
-extern void square_dgemm_blocked(int, int, double*, double*, double*) ;
+extern void square_dgemm_blocked(int, int, double*, double*, double*);
 extern const char* dgemm_desc;
 
 void reference_dgemm(int n, double alpha, double* A, double* B, double* C) {

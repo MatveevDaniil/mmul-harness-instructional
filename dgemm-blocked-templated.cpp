@@ -2,13 +2,14 @@
 #include <iostream>
 #include <stdio.h>
 
-const char* dgemm_desc = "Blocked+templated dgemm.";
+const char* dgemm_desc = "Blocked dgemm.";
 
-void block_dgemm(int n, double* A, double* B, double* C) 
+template<int n>
+void block_dgemm(double* A, double* B, double* C) 
 {
   double dot_prod, *A_i, *C_i, *B_j, *C_ij, *A_ik, *B_kj;
   for (A_i = A, C_i = C; A_i < A + n * n; A_i += n, C_i += n)
-    for (B_j = B, C_ij = Ca_i; B_j < B + n; B_j += 1, C_ij += 1) {
+    for (B_j = B, C_ij = C_i; B_j < B + n; B_j += 1, C_ij += 1) {
       dot_prod = 0;
       for (A_ik = A_i, B_kj = B_j; B_kj < B_j + n * n; A_ik += 1, B_kj += n)
         dot_prod += (*A_ik) * (*B_kj);
@@ -24,7 +25,8 @@ void block_dgemm(int n, double* A, double* B, double* C)
 //   }
 // }
 
-void copy_to_block(int n, int block_size, double *M, double *block, int block_i, int block_j) {
+template<int block_size>
+void copy_to_block(int n, double *M, double *block, int block_i, int block_j) {
   M += block_i * block_size * n + block_j * block_size;
   double *M_i, *B_i, *M_ij, *B_ij;
   for (M_i = M, B_i = block; M_i < M + block_size * n; M_i += n, B_i += block_size)
@@ -32,7 +34,8 @@ void copy_to_block(int n, int block_size, double *M, double *block, int block_i,
       *B_ij = *M_ij;
 }
 
-void add_from_block(int n, int block_size, double *M, double *block, int block_i, int block_j) {
+template<int block_size>
+void add_from_block(int n, double *M, double *block, int block_i, int block_j) {
   M += block_i * block_size * n + block_j * block_size;
   double *M_i, *B_i, *M_ij, *B_ij;
   for (M_i = M, B_i = block; M_i < M + block_size * n; M_i += n, B_i += block_size)
@@ -42,7 +45,8 @@ void add_from_block(int n, int block_size, double *M, double *block, int block_i
     }
 }
 
-void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C) 
+template<int block_size>
+void square_dgemm_blocked_templated(int n, double* A, double* B, double* C) 
 {
   std::vector<double> buf(3 * block_size * block_size);
   double* A_block = buf.data() + 0;
@@ -51,9 +55,29 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
   for (int i = 0; i < n / block_size; i++)
     for (int j = 0; j < n / block_size; j++)
       for (int k = 0; k < n / block_size; k++) {
-        copy_to_block(n, block_size, A, A_block, i, k);
-        copy_to_block(n, block_size, B, B_block, k, j);
+        copy_to_block<block_size>(n, A, A_block, i, k);
+        copy_to_block<block_size>(n, B, B_block, k, j);
         block_dgemm(block_size, A_block, B_block, C_block);
-        add_from_block(n, block_size, C, C_block, i, j);
+        add_from_block<block_size>(n, C, C_block, i, j);
       }
+}
+
+void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C) 
+{
+  switch (block_size) {
+    case 2:
+      square_dgemm_blocked_templated<2>(n, A, B, C);
+      break;
+    case 16:
+      square_dgemm_blocked_templated<16>(n, A, B, C);
+      break;
+    case 32:
+      square_dgemm_blocked_templated<32>(n, A, B, C);
+      break;
+    case 64:
+      square_dgemm_blocked_templated<64>(n, A, B, C);
+      break;
+    default:
+      std::cerr << "Unsupported block size" << std::endl;
+  }
 }
