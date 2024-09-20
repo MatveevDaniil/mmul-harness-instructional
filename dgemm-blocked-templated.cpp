@@ -57,7 +57,7 @@ void square_dgemm_blocked_templated(int n, double* A, double* B, double* C)
       for (int k = 0; k < n / block_size; k++) {
         copy_to_block<block_size>(n, A, A_block, i, k);
         copy_to_block<block_size>(n, B, B_block, k, j);
-        block_dgemm(block_size, A_block, B_block, C_block);
+        block_dgemm<block_size>(A_block, B_block, C_block);
         add_from_block<block_size>(n, C, C_block, i, j);
       }
 }
