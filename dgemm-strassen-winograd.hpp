@@ -42,13 +42,13 @@ template <int seq_limit>
 void Strassen(int n, double* X, double* Y, double* Z) 
 {
   if (n <= seq_limit) {
-    seq_dgemm(n, X, Y, C);
+    seq_dgemm(n, X, Y, Z);
     return;
   }
   int n_2 = n / 2;
   int n2_sq = n_2 * n_2;
 
-  std::vector<double> buf(n2_s * 14, 0);
+  std::vector<double> buf(n2_sq * 14, 0);
 
   double* a = buf.data() + 0;
   double*  b = a + n2_sq;
