@@ -2,12 +2,12 @@
 #include <iostream>
 #include <stdio.h>
 
-const char* dgemm_desc = "Blocked+templated dgemm.";
+const char* dgemm_desc = "Blocked dgemm.";
 
 void block_dgemm(int n, double* A, double* B, double* C) 
 {
-  for (int i = 0; i < n; i++)
-    for (int k = 0; k < n; k++)
+  for (int k = 0; k < n; k++)
+    for (int i = 0; i < n; i++)
       for (int j = 0; j < n; j++)
         C[i * n + j] += A[i * n + k] * B[k * n + j];
 }
@@ -36,9 +36,9 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
   double* A_block = buf.data() + 0;
   double* B_block = A_block + block_size * block_size;
   double* C_block = B_block + block_size * block_size;
-  for (int i = 0; i < n / block_size; i++)
-    for (int j = 0; j < n / block_size; j++)
-      for (int k = 0; k < n / block_size; k++) {
+  for (int k = 0; k < n / block_size; k++)
+    for (int i = 0; i < n / block_size; i++)
+      for (int j = 0; j < n / block_size; j++) {
         copy_to_block(n, block_size, A, A_block, i, k);
         copy_to_block(n, block_size, B, B_block, k, j);
         block_dgemm(block_size, A_block, B_block, C_block);

@@ -2,24 +2,16 @@
 #include <iostream>
 #include <stdio.h>
 
-const char* dgemm_desc = "Blocked dgemm.";
+const char* dgemm_desc = "Blocked+templated dgemm.";
 
 template<int n>
 void block_dgemm(double* A, double* B, double* C) 
 {
-  for (int i = 0; i < n; i++)
-    for (int k = 0; k < n; k++)
+  for (int k = 0; k < n; k++)
+    for (int i = 0; i < n; i++)
       for (int j = 0; j < n; j++)
         C[i * n + j] += A[i * n + k] * B[k * n + j];
 }
-
-// void print_matrix(int n, double *A) {
-//   for (int i = 0; i < n; i++) {
-//     for (int j = 0; j < n; j++)
-//       printf("%f ", A[i + j * n]);
-//     printf("\n");
-//   }
-// }
 
 template<int block_size>
 void copy_to_block(int n, double *M, double *block, int block_i, int block_j) {
@@ -48,9 +40,9 @@ void square_dgemm_blocked_templated(int n, double* A, double* B, double* C)
   double* A_block = buf.data() + 0;
   double* B_block = A_block + block_size * block_size;
   double* C_block = B_block + block_size * block_size;
-  for (int i = 0; i < n / block_size; i++)
-    for (int j = 0; j < n / block_size; j++)
-      for (int k = 0; k < n / block_size; k++) {
+  for (int k = 0; k < n / block_size; k++) 
+    for (int i = 0; i < n / block_size; i++)
+      for (int j = 0; j < n / block_size; j++) {
         copy_to_block<block_size>(n, A, A_block, i, k);
         copy_to_block<block_size>(n, B, B_block, k, j);
         block_dgemm<block_size>(A_block, B_block, C_block);
