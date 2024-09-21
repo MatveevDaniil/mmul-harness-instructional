@@ -64,13 +64,13 @@ void Strassen(int n, double* X, double* Y, double* Z)
   double*  w = v + n2_sq;
 
   copy_to_block(n, X, a, n_2, 0, 0);
-  copy_to_block(n, X, b, n_2, 0, n_2);
-  copy_to_block(n, X, c, n_2, n_2, 0);
-  copy_to_block(n, X, d, n_2, n_2, n_2);
+  copy_to_block(n, X, b, n_2, 0, 1);
+  copy_to_block(n, X, c, n_2, 1, 0);
+  copy_to_block(n, X, d, n_2, 1, 1);
   copy_to_block(n, Y, A, n_2, 0, 0);
-  copy_to_block(n, Y, C, n_2, 0, n_2);
-  copy_to_block(n, Y, B, n_2, n_2, 0);
-  copy_to_block(n, Y, D, n_2, n_2, n_2);
+  copy_to_block(n, Y, C, n_2, 0, 1);
+  copy_to_block(n, Y, B, n_2, 1, 0);
+  copy_to_block(n, Y, D, n_2, 1, 1);
 
   double*  tempA = w + n2_sq;
   double*  tempB = tempA + n2_sq;
@@ -100,7 +100,7 @@ void Strassen(int n, double* X, double* Y, double* Z)
   matrixAdd(n_2, tempA, b, u);
 
   add_from_block(n, Z, t, n_2, 0, 0);
-  add_from_block(n, Z, u, n_2, 0, n_2);
-  add_from_block(n, Z, v, n_2, n_2, 0);
-  add_from_block(n, Z, w, n_2, n_2, n_2);
+  add_from_block(n, Z, u, n_2, 0, 1);
+  add_from_block(n, Z, v, n_2, 1, 0);
+  add_from_block(n, Z, w, n_2, 1, 1);
 }
