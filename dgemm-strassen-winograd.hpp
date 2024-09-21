@@ -1,5 +1,6 @@
 // This code is modification of the following implementation: 
 // https://github.com/lrvine/Strassen-algorithm/blob/master/strassen.c
+#include <vector>
 
 void seq_dgemm(int n, double* A, double* B, double* C) 
 {
@@ -96,5 +97,8 @@ void Strassen(int n, double* X, double* Y, double* Z)
   Strassen<seq_limit>(n_2, d, D, b);
   matrixAdd(n_2, tempA, b, u);
 
-  four_blocks_to_matrix(n_2, padding, Z, t, u, v, w);
+  add_from_block(n, Z, t, n_2, 0, 0);
+  add_from_block(n, Z, u, n_2, 0, n_2);
+  add_from_block(n, Z, v, n_2, n_2, 0);
+  add_from_block(n, Z, w, n_2, n_2, n_2);
 }
