@@ -4,6 +4,8 @@
 
 void seq_dgemm(int n, double* A, double* B, double* C) 
 {
+  for (int tmpi = 0;tmpi < n * n; tmpi++)
+    C[tmpi] = 0;
   for (int k = 0; k < n; k++)
     for (int i = 0; i < n; i++)
       for (int j = 0; j < n; j++)
@@ -18,12 +20,12 @@ void copy_to_block(int n, double *M, double *block, int block_size, int block_i,
       *B_ij = *M_ij;
 }
 
-void add_from_block(int n, double *M, double *block, int block_size, int block_i, int block_j) {
+void copy_from_block(int n, double *M, double *block, int block_size, int block_i, int block_j) {
   M += block_i * block_size * n + block_j * block_size;
   double *M_i, *B_i, *M_ij, *B_ij;
   for (M_i = M, B_i = block; M_i < M + block_size * n; M_i += n, B_i += block_size)
     for (M_ij = M_i, B_ij = B_i; M_ij < M_i + block_size; M_ij += 1, B_ij += 1)
-      *M_ij += *B_ij;
+      *M_ij = *B_ij;
 }
 
 void matrixAdd(int n, double *A, double *B, double *C) {
@@ -72,35 +74,32 @@ void Strassen(int n, double* X, double* Y, double* Z)
   copy_to_block(n, Y, B, n_2, 1, 0);
   copy_to_block(n, Y, D, n_2, 1, 1);
 
-  double*  tempA = w + n2_sq;
-  double*  tempB = tempA + n2_sq;
-
-  matrixSub(n_2, a, c, tempA);
+  matrixSub(n_2, a, c, t);
   matrixAdd(n_2, c, d, c);
-  matrixSub(n_2, C, A, tempB);
+  matrixSub(n_2, C, A, w);
   matrixSub(n_2, D, C, C);
-  Strassen<seq_limit>(n_2, tempA, C, v);
-  matrixSub(n_2, c, a, tempA);
+  Strassen<seq_limit>(n_2, t, C, v);
+  matrixSub(n_2, c, a, u);
   Strassen<seq_limit>(n_2, a, A, t);
-  matrixSub(n_2, D, tempB, A);
-  Strassen<seq_limit>(n_2, c, tempB, a);
-  matrixSub(n_2, A, B, tempB);
-  Strassen<seq_limit>(n_2, d, tempB, c);
+  matrixSub(n_2, D, w, A);
+  Strassen<seq_limit>(n_2, c, w, a);
+  matrixSub(n_2, A, B, w);
+  Strassen<seq_limit>(n_2, d, w, c);
 
-  matrixSub(n_2, b, tempA, d);
-  Strassen<seq_limit>(n_2, tempA, A, tempB);
-  matrixAdd(n_2, t, tempB, w);
-  Strassen<seq_limit>(n_2, b, B, tempA);
-  matrixAdd(n_2, t, tempA, t);
-  matrixAdd(n_2, w, a, tempA);
+  matrixSub(n_2, b, u, d);
+  Strassen<seq_limit>(n_2, u, A, w);
+  matrixAdd(n_2, t, w, w);
+  Strassen<seq_limit>(n_2, b, B, u);
+  matrixAdd(n_2, t, u, t);
+  matrixAdd(n_2, w, a, u);
   matrixAdd(n_2, w, v, w);
   matrixSub(n_2, w, c, v);
   matrixAdd(n_2, w, a, w);
   Strassen<seq_limit>(n_2, d, D, b);
-  matrixAdd(n_2, tempA, b, u);
+  matrixAdd(n_2, u, b, u);
 
-  add_from_block(n, Z, t, n_2, 0, 0);
-  add_from_block(n, Z, u, n_2, 0, 1);
-  add_from_block(n, Z, v, n_2, 1, 0);
-  add_from_block(n, Z, w, n_2, 1, 1);
+  copy_from_block(n, Z, t, n_2, 0, 0);
+  copy_from_block(n, Z, u, n_2, 0, 1);
+  copy_from_block(n, Z, v, n_2, 1, 0);
+  copy_from_block(n, Z, w, n_2, 1, 1);
 }
