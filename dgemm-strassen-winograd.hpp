@@ -48,18 +48,20 @@ void Strassen(int n, double* X, double* Y, double* Z)
   int n_2 = n / 2;
   int n2_sq = n_2 * n_2;
 
-  std::vector<double> a(n2_sq).data();
-  std::vector<double> b(n2_sq).data();
-  std::vector<double> c(n2_sq).data();
-  std::vector<double> d(n2_sq).data();
-  std::vector<double> A(n2_sq).data();
-  std::vector<double> C(n2_sq).data();
-  std::vector<double> B(n2_sq).data();
-  std::vector<double> D(n2_sq).data();
-  std::vector<double> t(n2_sq, 0).data();
-  std::vector<double> u(n2_sq, 0).data();
-  std::vector<double> v(n2_sq, 0).data();
-  std::vector<double> w(n2_sq, 0).data();
+  std::vector<double> buf(n2_s * 14, 0);
+
+  double* a = buf.data() + 0;
+  double*  b = a + n2_sq;
+  double*  c = b + n2_sq;
+  double*  d = c + n2_sq;
+  double*  A = d + n2_sq;
+  double*  C = A + n2_sq;
+  double*  B = C + n2_sq;
+  double*  D = B + n2_sq;
+  double*  t = D + n2_sq;
+  double*  u = t + n2_sq;
+  double*  v = u + n2_sq;
+  double*  w = v + n2_sq;
 
   copy_to_block(n, X, a, n_2, 0, 0);
   copy_to_block(n, X, b, n_2, 0, n_2);
@@ -70,8 +72,8 @@ void Strassen(int n, double* X, double* Y, double* Z)
   copy_to_block(n, Y, B, n_2, n_2, 0);
   copy_to_block(n, Y, D, n_2, n_2, n_2);
 
-  std::vector<double> tempA(n2_sq, 0).data();
-  std::vector<double> tempB(n2_sq, 0).data();
+  double*  tempA = w + n2_sq;
+  double*  tempB = tempA + n2_sq;
 
   matrixSub(n_2, a, c, tempA);
   matrixAdd(n_2, c, d, c);
