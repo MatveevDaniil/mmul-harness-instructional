@@ -57,10 +57,10 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
       square_dgemm_blocked_templated<2>(n, A, B, C);
       break;
     case 4:
-      square_dgemm_blocked_templated<2>(n, A, B, C);
+      square_dgemm_blocked_templated<4>(n, A, B, C);
       break;
     case 8:
-      square_dgemm_blocked_templated<2>(n, A, B, C);
+      square_dgemm_blocked_templated<8>(n, A, B, C);
       break;
     case 16:
       square_dgemm_blocked_templated<16>(n, A, B, C);
