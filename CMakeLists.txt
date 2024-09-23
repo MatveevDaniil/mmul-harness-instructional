@@ -28,7 +28,7 @@ set(BENCHMARKS_permutations
 )
 
 foreach(BENCHMARK ${BENCHMARKS_permutations})
-    add_executable(benchmark-${BENCHMARK} /dgemm-basic/dgemm-${BENCHMARK}.cpp)
+    add_executable(benchmark-${BENCHMARK} dgemm-basic/dgemm-${BENCHMARK}.cpp)
     target_link_libraries(benchmark-${BENCHMARK} PRIVATE benchmark ${BLAS_LIBRARIES})
     target_compile_features(benchmark-${BENCHMARK} PRIVATE c_std_11 c_restrict)
     target_compile_options(benchmark-${BENCHMARK} PRIVATE -Wall -pedantic -march=native)
@@ -48,7 +48,7 @@ set(BENCHMARKS_blocked
 )
 
 foreach(BENCHMARK ${BENCHMARKS_BLOCKED})
-    add_executable(benchmark-${BENCHMARK} /dgemm-blocked/dgemm-${SOURCE_FILE}.cpp)
+    add_executable(benchmark-${BENCHMARK} dgemm-blocked/dgemm-${SOURCE_FILE}.cpp)
     add_library(bench-${BENCHMARK} OBJECT benchmark.cpp)
     target_compile_definitions(bench-${BENCHMARK} PRIVATE -DBLOCKED)
     target_compile_features(bench-${BENCHMARK} PRIVATE cxx_std_11)
@@ -66,7 +66,7 @@ set(BENCHMARKS_strassen
 )
 
 foreach(BENCHMARK ${BENCHMARKS_strassen})
-    add_executable(benchmark-${BENCHMARK} /dgemm-strassen/dgemm-${BENCHMARK}.cpp)
+    add_executable(benchmark-${BENCHMARK} dgemm-strassen/dgemm-${BENCHMARK}.cpp)
     target_link_libraries(benchmark-${BENCHMARK} PRIVATE benchmark ${BLAS_LIBRARIES})
     target_compile_features(benchmark-${BENCHMARK} PRIVATE c_std_11 c_restrict)
     target_compile_options(benchmark-${BENCHMARK} PRIVATE -Wall -pedantic -march=native)
