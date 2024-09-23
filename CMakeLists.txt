@@ -45,7 +45,7 @@ set(BENCHMARKS_blocked
     "blocked"
     "blocked-templated"
 )
-foreach(BENCHMARK ${BENCHMARKS_BLOCKED})
+foreach(BENCHMARK ${BENCHMARKS_blocked})
     add_executable(benchmark-${BENCHMARK} dgemm-blocked/dgemm-${SOURCE_FILE}.cpp)
     add_library(bench-${BENCHMARK} OBJECT benchmark.cpp)
     target_compile_definitions(bench-${BENCHMARK} PRIVATE -DBLOCKED)
