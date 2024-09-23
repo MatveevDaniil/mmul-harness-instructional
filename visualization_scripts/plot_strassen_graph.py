@@ -187,6 +187,6 @@ legend_elements = [
 ]
 
 plt.legend(handles=legend_elements, loc='lower right')
-
+plt.title('Strassen-Winograd Algorithm Operations Graph')
 # plt.show()
-plt.savefig('strassen_opeartions_graph.png', dpi=300)
+plt.savefig('./visualization_scripts/strassen_opeartions_graph.png', dpi=300)

@@ -32,7 +32,6 @@ foreach(BENCHMARK ${BENCHMARKS_permutations})
     target_link_libraries(benchmark-${BENCHMARK} PRIVATE benchmark ${BLAS_LIBRARIES})
     target_compile_features(benchmark-${BENCHMARK} PRIVATE c_std_11 c_restrict)
     target_compile_options(benchmark-${BENCHMARK} PRIVATE -Wall -pedantic -march=native)
-    configure_file(job.in job-${BENCHMARK})
 endforeach()
 
 
@@ -41,11 +40,10 @@ target_link_libraries(benchmark-blas PRIVATE benchmark ${BLAS_LIBRARIES})
 target_compile_features(benchmark-blas PRIVATE c_std_11 c_restrict)
 target_compile_options(benchmark-blas PRIVATE -Wall -pedantic -march=native)
 set(BENCHMARK "blas")
-configure_file(job.in job-${BENCHMARK})
 
 
 set(BENCHMARKS_blocked
-    "blocked",
+    "blocked"
     "blocked-templated"
 )
 
@@ -57,11 +55,11 @@ foreach(BENCHMARK ${BENCHMARKS_BLOCKED})
     target_link_libraries(benchmark-${BENCHMARK} PRIVATE bench-${BENCHMARK} ${BLAS_LIBRARIES})
     target_compile_features(benchmark-${BENCHMARK} PRIVATE c_std_11 c_restrict)
     target_compile_options(benchmark-${BENCHMARK} PRIVATE -Wall -pedantic -march=native)
-    configure_file(job.in job-${BENCHMARK})
 endforeach()
 
 
 set(BENCHMARKS_strassen
+    "strassen-1"
     "strassen-16"
     "strassen-64"
     "strassen-256"
@@ -72,5 +70,4 @@ foreach(BENCHMARK ${BENCHMARKS_strassen})
     target_link_libraries(benchmark-${BENCHMARK} PRIVATE benchmark ${BLAS_LIBRARIES})
     target_compile_features(benchmark-${BENCHMARK} PRIVATE c_std_11 c_restrict)
     target_compile_options(benchmark-${BENCHMARK} PRIVATE -Wall -pedantic -march=native)
-    configure_file(job.in job-${BENCHMARK})
 endforeach()
