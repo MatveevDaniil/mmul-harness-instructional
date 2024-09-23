@@ -18,6 +18,7 @@ endif ()
 add_library(benchmark OBJECT benchmark.cpp)
 target_compile_features(benchmark PRIVATE cxx_std_11)
 
+
 set(BENCHMARKS_permutations
     "basic-ijk"
     "basic-ikj"
@@ -26,7 +27,6 @@ set(BENCHMARKS_permutations
     "basic-kji"
     "basic-kij"
 )
-
 foreach(BENCHMARK ${BENCHMARKS_permutations})
     add_executable(benchmark-${BENCHMARK} dgemm-basic/dgemm-${BENCHMARK}.cpp)
     target_link_libraries(benchmark-${BENCHMARK} PRIVATE benchmark ${BLAS_LIBRARIES})
@@ -39,14 +39,12 @@ add_executable(benchmark-blas dgemm-blas.cpp)
 target_link_libraries(benchmark-blas PRIVATE benchmark ${BLAS_LIBRARIES})
 target_compile_features(benchmark-blas PRIVATE c_std_11 c_restrict)
 target_compile_options(benchmark-blas PRIVATE -Wall -pedantic -march=native)
-set(BENCHMARK "blas")
 
 
 set(BENCHMARKS_blocked
     "blocked"
     "blocked-templated"
 )
-
 foreach(BENCHMARK ${BENCHMARKS_BLOCKED})
     add_executable(benchmark-${BENCHMARK} dgemm-blocked/dgemm-${SOURCE_FILE}.cpp)
     add_library(bench-${BENCHMARK} OBJECT benchmark.cpp)
@@ -64,7 +62,6 @@ set(BENCHMARKS_strassen
     "strassen-64"
     "strassen-256"
 )
-
 foreach(BENCHMARK ${BENCHMARKS_strassen})
     add_executable(benchmark-${BENCHMARK} dgemm-strassen/dgemm-${BENCHMARK}.cpp)
     target_link_libraries(benchmark-${BENCHMARK} PRIVATE benchmark ${BLAS_LIBRARIES})
