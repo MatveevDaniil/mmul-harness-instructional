@@ -51,8 +51,6 @@ bool check_accuracy(double *A, double *Anot, int nvalues)
 /* The benchmarking program */
 int main(int argc, char** argv) 
 {
-    std::cout << "Description:\t" << dgemm_desc << std::endl << std::endl;
-
     std::cout << std::fixed << std::setprecision(8);
 
     // 9/14/2024: run the 1st problem size twice: the first execution
@@ -67,11 +65,15 @@ int main(int argc, char** argv)
     std::chrono::duration<double> run_time, cblas_time;
 
     /* For each test size */
+#ifdef BLOCKED
+    printf("n=,Block Size=,Time=\n");
+#else
+    printf("n=,Time=\n");
+#endif
     for (int n : test_sizes) 
     {
 
 #ifdef BLOCKED
-        printf("Blocked DGEMM \n");
         for (int b : block_sizes)
         {
 #endif
@@ -117,10 +119,10 @@ int main(int argc, char** argv)
               printf(" Error: your answer is not the same as that computed by BLAS. \n");
 
 #ifdef BLOCKED
-            printf("N=%d, Block Size=%d, Time=%f, Cblas_ratio=%f\n", n, b, run_time.count(), run_time.count() / cblas_time.count());
+            printf("%d,%d,%f\n", n, b, run_time.count());
         } // end loop over block sizes
 #else
-            printf("N=%d, Time=%f, Cblas_ratio=%f\n", n, run_time.count(), run_time.count() / cblas_time.count());
+            printf("%d,%f\n", n, run_time.count());
 #endif
 
     } // end loop over problem sizes

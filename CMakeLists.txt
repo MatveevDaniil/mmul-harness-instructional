@@ -18,54 +18,23 @@ endif ()
 add_library(benchmark OBJECT benchmark.cpp)
 target_compile_features(benchmark PRIVATE cxx_std_11)
 
-add_executable(benchmark-basic-ijk dgemm-basic-ijk.cpp)
-target_link_libraries(benchmark-basic-ijk PRIVATE benchmark ${BLAS_LIBRARIES})
-target_compile_features(benchmark-basic-ijk PRIVATE c_std_11 c_restrict)
-target_compile_options(benchmark-basic-ijk PRIVATE -Wall -pedantic -march=native)
-set(BENCHMARK "basic-ijk")
-configure_file(job.in job-${BENCHMARK})
+set(BENCHMARKS_permutations
+    "basic-ijk"
+    "basic-ikj"
+    "basic-jik"
+    "basic-jki"
+    "basic-kji"
+    "basic-kij"
+)
 
-add_executable(benchmark-basic-ikj dgemm-basic-ikj.cpp)
-target_link_libraries(benchmark-basic-ikj PRIVATE benchmark ${BLAS_LIBRARIES})
-target_compile_features(benchmark-basic-ikj PRIVATE c_std_11 c_restrict)
-target_compile_options(benchmark-basic-ikj PRIVATE -Wall -pedantic -march=native)
-set(BENCHMARK "basic-ikj")
-configure_file(job.in job-${BENCHMARK})
+foreach(BENCHMARK ${BENCHMARKS_permutations})
+    add_executable(benchmark-${BENCHMARK} /dgemm-basic/dgemm-${BENCHMARK}.cpp)
+    target_link_libraries(benchmark-${BENCHMARK} PRIVATE benchmark ${BLAS_LIBRARIES})
+    target_compile_features(benchmark-${BENCHMARK} PRIVATE c_std_11 c_restrict)
+    target_compile_options(benchmark-${BENCHMARK} PRIVATE -Wall -pedantic -march=native)
+    configure_file(job.in job-${BENCHMARK})
+endforeach()
 
-add_executable(benchmark-basic-jik dgemm-basic-jik.cpp)
-target_link_libraries(benchmark-basic-jik PRIVATE benchmark ${BLAS_LIBRARIES})
-target_compile_features(benchmark-basic-jik PRIVATE c_std_11 c_restrict)
-target_compile_options(benchmark-basic-jik PRIVATE -Wall -pedantic -march=native)
-set(BENCHMARK "basic-jik")
-configure_file(job.in job-${BENCHMARK})
-
-add_executable(benchmark-basic-jki dgemm-basic-jki.cpp)
-target_link_libraries(benchmark-basic-jki PRIVATE benchmark ${BLAS_LIBRARIES})
-target_compile_features(benchmark-basic-jki PRIVATE c_std_11 c_restrict)
-target_compile_options(benchmark-basic-jki PRIVATE -Wall -pedantic -march=native)
-set(BENCHMARK "basic-jki")
-configure_file(job.in job-${BENCHMARK})
-
-add_executable(benchmark-basic-kji dgemm-basic-kji.cpp)
-target_link_libraries(benchmark-basic-kji PRIVATE benchmark ${BLAS_LIBRARIES})
-target_compile_features(benchmark-basic-kji PRIVATE c_std_11 c_restrict)
-target_compile_options(benchmark-basic-kji PRIVATE -Wall -pedantic -march=native)
-set(BENCHMARK "basic-kji")
-configure_file(job.in job-${BENCHMARK})
-
-add_executable(benchmark-basic-kij dgemm-basic-kij.cpp)
-target_link_libraries(benchmark-basic-kij PRIVATE benchmark ${BLAS_LIBRARIES})
-target_compile_features(benchmark-basic-kij PRIVATE c_std_11 c_restrict)
-target_compile_options(benchmark-basic-kij PRIVATE -Wall -pedantic -march=native)
-set(BENCHMARK "basic-kij")
-configure_file(job.in job-${BENCHMARK})
-
-add_executable(benchmark-basic-iterator-optimization dgemm-basic-iterator-optimization.cpp)
-target_link_libraries(benchmark-basic-iterator-optimization PRIVATE benchmark ${BLAS_LIBRARIES})
-target_compile_features(benchmark-basic-iterator-optimization PRIVATE c_std_11 c_restrict)
-target_compile_options(benchmark-basic-iterator-optimization PRIVATE -Wall -pedantic -march=native)
-set(BENCHMARK "basic-iterator-optimization")
-configure_file(job.in job-${BENCHMARK})
 
 add_executable(benchmark-blas dgemm-blas.cpp)
 target_link_libraries(benchmark-blas PRIVATE benchmark ${BLAS_LIBRARIES})
@@ -74,43 +43,34 @@ target_compile_options(benchmark-blas PRIVATE -Wall -pedantic -march=native)
 set(BENCHMARK "blas")
 configure_file(job.in job-${BENCHMARK})
 
-add_executable(benchmark-blocked dgemm-blocked.cpp)
-add_library(bench-blocked OBJECT benchmark.cpp)
-target_compile_definitions(bench-blocked PRIVATE -DBLOCKED)
-target_compile_features(bench-blocked PRIVATE cxx_std_11)
-target_link_libraries(benchmark-blocked PRIVATE bench-blocked ${BLAS_LIBRARIES})
-target_compile_features(benchmark-blocked PRIVATE c_std_11 c_restrict)
-target_compile_options(benchmark-blocked PRIVATE -Wall -pedantic -march=native)
-set(BENCHMARK "blocked")
-configure_file(job.in job-${BENCHMARK})
 
-add_executable(benchmark-blocked-templated dgemm-blocked-templated.cpp)
-add_library(bench-blocked-templated OBJECT benchmark.cpp)
-target_compile_definitions(bench-blocked-templated PRIVATE -DBLOCKED)
-target_compile_features(bench-blocked-templated PRIVATE cxx_std_11)
-target_link_libraries(benchmark-blocked-templated PRIVATE bench-blocked-templated ${BLAS_LIBRARIES})
-target_compile_features(benchmark-blocked-templated PRIVATE c_std_11 c_restrict)
-target_compile_options(benchmark-blocked-templated PRIVATE -Wall -pedantic -march=native)
-set(BENCHMARK "blocked-templated")
-configure_file(job.in job-${BENCHMARK})
+set(BENCHMARKS_blocked
+    "blocked",
+    "blocked-templated"
+)
 
-add_executable(benchmark-strassen-16 dgemm-strassen-16.cpp)
-target_link_libraries(benchmark-strassen-16 PRIVATE benchmark ${BLAS_LIBRARIES})
-target_compile_features(benchmark-strassen-16 PRIVATE c_std_11 c_restrict)
-target_compile_options(benchmark-strassen-16 PRIVATE -Wall -pedantic -march=native)
-set(BENCHMARK "strassen-16")
-configure_file(job.in job-${BENCHMARK})
+foreach(BENCHMARK ${BENCHMARKS_BLOCKED})
+    add_executable(benchmark-${BENCHMARK} /dgemm-blocked/dgemm-${SOURCE_FILE}.cpp)
+    add_library(bench-${BENCHMARK} OBJECT benchmark.cpp)
+    target_compile_definitions(bench-${BENCHMARK} PRIVATE -DBLOCKED)
+    target_compile_features(bench-${BENCHMARK} PRIVATE cxx_std_11)
+    target_link_libraries(benchmark-${BENCHMARK} PRIVATE bench-${BENCHMARK} ${BLAS_LIBRARIES})
+    target_compile_features(benchmark-${BENCHMARK} PRIVATE c_std_11 c_restrict)
+    target_compile_options(benchmark-${BENCHMARK} PRIVATE -Wall -pedantic -march=native)
+    configure_file(job.in job-${BENCHMARK})
+endforeach()
 
-add_executable(benchmark-strassen-64 dgemm-strassen-64.cpp)
-target_link_libraries(benchmark-strassen-64 PRIVATE benchmark ${BLAS_LIBRARIES})
-target_compile_features(benchmark-strassen-64 PRIVATE c_std_11 c_restrict)
-target_compile_options(benchmark-strassen-64 PRIVATE -Wall -pedantic -march=native)
-set(BENCHMARK "strassen-64")
-configure_file(job.in job-${BENCHMARK})
 
-add_executable(benchmark-strassen-256 dgemm-strassen-256.cpp)
-target_link_libraries(benchmark-strassen-256 PRIVATE benchmark ${BLAS_LIBRARIES})
-target_compile_features(benchmark-strassen-256 PRIVATE c_std_11 c_restrict)
-target_compile_options(benchmark-strassen-256 PRIVATE -Wall -pedantic -march=native)
-set(BENCHMARK "strassen-256")
-configure_file(job.in job-${BENCHMARK})
+set(BENCHMARKS_strassen
+    "strassen-16"
+    "strassen-64"
+    "strassen-256"
+)
+
+foreach(BENCHMARK ${BENCHMARKS_strassen})
+    add_executable(benchmark-${BENCHMARK} /dgemm-strassen/dgemm-${BENCHMARK}.cpp)
+    target_link_libraries(benchmark-${BENCHMARK} PRIVATE benchmark ${BLAS_LIBRARIES})
+    target_compile_features(benchmark-${BENCHMARK} PRIVATE c_std_11 c_restrict)
+    target_compile_options(benchmark-${BENCHMARK} PRIVATE -Wall -pedantic -march=native)
+    configure_file(job.in job-${BENCHMARK})
+endforeach()
