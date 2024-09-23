@@ -1,0 +1,21 @@
+#!/bin/bash
+
+benchmark_names=(
+    "blas"
+    "basic-ijk"
+    "basic-ikj"
+    "basic-jik"
+    "basic-jki"
+    "basic-kji"
+    "basic-kij"
+    "blocked"
+    "blocked-templated"
+    "strassen-1"
+    "strassen-16"
+    "strassen-64"
+    "strassen-256"
+)
+
+for benchmark_name in "${benchmark_names[@]}"; do
+    ./build/benchmark-${benchmark_name} > "./results/${benchmark_name}.csv"
+done
