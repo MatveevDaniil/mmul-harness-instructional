@@ -2,7 +2,6 @@
 #include <iostream>
 #include <stdio.h>
 
-const char* dgemm_desc = "Blocked dgemm.";
 
 void block_dgemm(int n, double* A, double* B, double* C) 
 {

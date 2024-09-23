@@ -2,7 +2,6 @@
 #include <iostream>
 #include <stdio.h>
 
-const char* dgemm_desc = "Blocked+templated dgemm.";
 
 template<int n>
 void block_dgemm(double* A, double* B, double* C) 

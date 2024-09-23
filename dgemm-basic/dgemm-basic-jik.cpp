@@ -1,5 +1,3 @@
-const char* dgemm_desc = "Basic implementation, jik-loop dgemm.";
-
 void square_dgemm(int n, double* A, double* B, double* C) 
 {
   for (int j = 0; j < n; j++)

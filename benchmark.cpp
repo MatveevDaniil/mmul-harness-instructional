@@ -21,7 +21,6 @@
 // external definitions for mmul's
 extern void square_dgemm(int, double*, double*, double*);
 extern void square_dgemm_blocked(int, int, double*, double*, double*);
-extern const char* dgemm_desc;
 
 void reference_dgemm(int n, double alpha, double* A, double* B, double* C) {
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, n, n, n, alpha, A, n, B, n, 1., C, n);
@@ -66,9 +65,9 @@ int main(int argc, char** argv)
 
     /* For each test size */
 #ifdef BLOCKED
-    printf("n=,Block Size=,Time=\n");
+    printf("n,Block Size,Time\n");
 #else
-    printf("n=,Time=\n");
+    printf("n,Time\n");
 #endif
     for (int n : test_sizes) 
     {
