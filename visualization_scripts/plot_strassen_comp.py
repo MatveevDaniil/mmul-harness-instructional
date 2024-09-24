@@ -22,7 +22,7 @@ for dim_limit in dim_limits:
 plt.plot(n_values, [2 * n ** 3 / mega for n in n_values], label="naive")
 
 plt.xlabel("Matrix dimension")
-plt.ylabel("MFLOPs")
+plt.ylabel("MFLOP")
 plt.title("Strassen-Winograd algorithm complexity")
 plt.legend()
 # plt.show()
